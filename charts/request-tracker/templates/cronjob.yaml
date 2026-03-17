@@ -1,0 +1,183 @@
+{{- if .Values.cron.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "request-tracker.fullname" . }}-getmail
+  labels:
+    {{- include "request-tracker.labels" . | nindent 4 }}
+    app.kubernetes.io/component: cron
+spec:
+  schedule: "*/5 * * * *"  # Every 5 minutes for getmail
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            {{- include "request-tracker.selectorLabels" . | nindent 12 }}
+            app.kubernetes.io/component: cron
+        spec:
+          restartPolicy: OnFailure
+          securityContext:
+            {{- toYaml .Values.podSecurityContext | nindent 12 }}
+          containers:
+            - name: rt-getmail
+              securityContext:
+                runAsUser: 0  # Cron needs to run as root
+              image: "{{ .Values.cron.image.repository }}:{{ .Values.cron.image.tag }}"
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              command:
+                - /bin/bash
+                - -c
+                - |
+                  # Run getmail if configured
+                  if [ -n "$GETMAIL_PASSWORD" ]; then
+                    echo "Running getmail..."
+                    /usr/bin/getmail --getmaildir=/getmail --rcfile=getmailrc
+                  else
+                    echo "No getmail password configured, skipping..."
+                  fi
+              env:
+                - name: GETMAIL_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "request-tracker.secretName" . }}
+                      key: getmail-password
+                      optional: true
+              volumeMounts:
+                - name: getmail-config
+                  mountPath: /getmail/getmailrc
+                  subPath: getmailrc
+                {{- if .Values.cron.persistence.enabled }}
+                - name: cron-data
+                  mountPath: /opt/rt5/var/data
+                {{- end }}
+          volumes:
+            - name: getmail-config
+              configMap:
+                name: {{ include "request-tracker.fullname" . }}-config
+            {{- if .Values.cron.persistence.enabled }}
+            - name: cron-data
+              persistentVolumeClaim:
+                claimName: {{ include "request-tracker.fullname" . }}-cron-data
+            {{- end }}
+
+---
+# Daily digest CronJob
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "request-tracker.fullname" . }}-daily-digest
+  labels:
+    {{- include "request-tracker.labels" . | nindent 4 }}
+    app.kubernetes.io/component: cron
+spec:
+  schedule: "0 0 * * *"  # Daily at midnight
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            {{- include "request-tracker.selectorLabels" . | nindent 12 }}
+            app.kubernetes.io/component: cron
+        spec:
+          restartPolicy: OnFailure
+          securityContext:
+            {{- toYaml .Values.podSecurityContext | nindent 12 }}
+          containers:
+            - name: rt-daily-digest
+              securityContext:
+                {{- toYaml .Values.securityContext | nindent 16 }}
+              image: "{{ .Values.cron.image.repository }}:{{ .Values.cron.image.tag }}"
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              command:
+                - /bin/bash
+                - -c
+                - |
+                  echo "Running daily digest..."
+                  /opt/rt5/bin/rt-email-digest -m daily
+              env:
+                - name: RT_DB_HOST
+                  value: {{ include "request-tracker.databaseHost" . | quote }}
+                - name: RT_DB_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "request-tracker.secretName" . }}
+                      key: database-password
+              volumeMounts:
+                - name: rt-config
+                  mountPath: /opt/rt5/etc/RT_SiteConfig.pm
+                  subPath: RT_SiteConfig.pm
+                {{- if .Values.cron.persistence.enabled }}
+                - name: cron-data
+                  mountPath: /opt/rt5/var/data
+                {{- end }}
+          volumes:
+            - name: rt-config
+              configMap:
+                name: {{ include "request-tracker.fullname" . }}-config
+            {{- if .Values.cron.persistence.enabled }}
+            - name: cron-data
+              persistentVolumeClaim:
+                claimName: {{ include "request-tracker.fullname" . }}-cron-data
+            {{- end }}
+
+---
+# Weekly digest CronJob
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "request-tracker.fullname" . }}-weekly-digest
+  labels:
+    {{- include "request-tracker.labels" . | nindent 4 }}
+    app.kubernetes.io/component: cron
+spec:
+  schedule: "0 0 * * 0"  # Weekly on Sunday at midnight
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            {{- include "request-tracker.selectorLabels" . | nindent 12 }}
+            app.kubernetes.io/component: cron
+        spec:
+          restartPolicy: OnFailure
+          securityContext:
+            {{- toYaml .Values.podSecurityContext | nindent 12 }}
+          containers:
+            - name: rt-weekly-digest
+              securityContext:
+                {{- toYaml .Values.securityContext | nindent 16 }}
+              image: "{{ .Values.cron.image.repository }}:{{ .Values.cron.image.tag }}"
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              command:
+                - /bin/bash
+                - -c
+                - |
+                  echo "Running weekly digest..."
+                  /opt/rt5/bin/rt-email-digest -m weekly
+              env:
+                - name: RT_DB_HOST
+                  value: {{ include "request-tracker.databaseHost" . | quote }}
+                - name: RT_DB_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "request-tracker.secretName" . }}
+                      key: database-password
+              volumeMounts:
+                - name: rt-config
+                  mountPath: /opt/rt5/etc/RT_SiteConfig.pm
+                  subPath: RT_SiteConfig.pm
+                {{- if .Values.cron.persistence.enabled }}
+                - name: cron-data
+                  mountPath: /opt/rt5/var/data
+                {{- end }}
+          volumes:
+            - name: rt-config
+              configMap:
+                name: {{ include "request-tracker.fullname" . }}-config
+            {{- if .Values.cron.persistence.enabled }}
+            - name: cron-data
+              persistentVolumeClaim:
+                claimName: {{ include "request-tracker.fullname" . }}-cron-data
+            {{- end }}
+{{- end }}

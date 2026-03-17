@@ -1,0 +1,130 @@
+{{- $imagePullSecrets := ((not (empty .Values.imagePullSecrets)) | ternary .Values.imagePullSecrets .Values.global.imagePullSecrets) -}}
+{{- $dockerRegistryCredentials := .Values.image.auth.enabled | ternary .Values.image .Values.global.image -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "itop.fullname" . }}
+  labels:
+    {{- include "itop.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "itop.selectorLabels" . | nindent 6 }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "itop.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with $dockerRegistryCredentials.auth.enabled | ternary (prepend $imagePullSecrets (dict "name" (printf "%s-docker-config" (include "itop.fullname" .)))) $imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "itop.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ include "itop.imageRegistry" . }}/{{ .Values.image.repository }}:{{ default "latest" .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          {{- if or .Values.envVars .Values.env }}
+          env:
+          {{- with .Values.envVars }}
+            {{- range $i, $value := . }}
+            - name: {{ $value.name | quote }}
+              {{- if $value.valueFrom }}
+              valueFrom:
+                {{- toYaml $value.valueFrom | nindent 16 }}
+              {{- else }}
+              value: {{ $value.value | quote }}
+              {{- end }}
+            {{- end }}
+          {{- end }}
+          {{- with .Values.env }}
+            {{- range $name, $value := . }}
+            - name: {{ $name | quote }}
+              value: {{ $value | quote }}
+            {{- end }}
+          {{- end }}
+          {{- end }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          startupProbe:
+            tcpSocket:
+              port: http
+            {{- toYaml .Values.startupProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: php-config
+              mountPath: {{ .Values.persistence.phpConfig.mountPath }}
+              subPath: redis-session.ini
+            - name: itop-data
+              mountPath: {{ .Values.persistence.data.paths.conf }}
+              subPath: conf
+            - name: itop-data
+              mountPath: {{ .Values.persistence.data.paths.data }}
+              subPath: data
+            - name: itop-data
+              mountPath: {{ .Values.persistence.data.paths.envProduction }}
+              subPath: env-production
+            - name: itop-data
+              mountPath: {{ .Values.persistence.data.paths.extensions }}
+              subPath: extensions
+            - name: itop-data
+              mountPath: {{ .Values.persistence.data.paths.apacheLogs }}
+              subPath: apache-logs
+          {{- with .Values.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      volumes:
+        - name: php-config
+          configMap:
+            name: {{ include "itop.fullname" . }}-php-config
+        - name: itop-data
+          {{- if .Values.persistence.data.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ printf "%s-data" (include "itop.fullname" .) }}
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+      {{- with .Values.volumes }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

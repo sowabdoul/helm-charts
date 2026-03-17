@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "novu.web.fullname" . }}
+  labels:
+    app: {{ include "novu.name" . }}
+    component: web
+spec:
+  replicas: {{ .Values.web.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "novu.name" . }}
+      component: web
+  template:
+    metadata:
+      labels:
+        app: {{ include "novu.name" . }}
+        component: web
+    spec:
+      containers:
+        - name: web
+          image: "{{ .Values.web.image.repository }}:{{ .Values.web.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.web.image.pullPolicy }}
+          ports:
+            - containerPort: 4000
+          env:
+            - name: VITE_API_HOSTNAME
+              value: "{{ .Values.global.env.apiRootUrl }}"
+            - name: VITE_SELF_HOSTED
+              value: "true"
+            - name: VITE_WEBSOCKET_HOSTNAME
+              value: "{{ .Values.web.websocketHostname | default (printf "https://ws.%s" .Values.ingress.host) }}"
+            {{- if .Values.web.legacyDashboardUrl }}
+            - name: VITE_LEGACY_DASHBOARD_URL
+              value: "{{ .Values.web.legacyDashboardUrl }}"
+            {{- end }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 4000
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 4000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 10
+            failureThreshold: 3
+          resources:
+            {{- toYaml .Values.web.resources | nindent 12 }}
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      restartPolicy: Always
+

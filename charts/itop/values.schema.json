@@ -1,0 +1,1355 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "properties": {
+    "adminer": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "default": false,
+          "title": "enabled",
+          "type": "boolean"
+        },
+        "fullnameOverride": {
+          "default": "adminer",
+          "title": "fullnameOverride",
+          "type": "string"
+        }
+      },
+      "required": [
+        "enabled",
+        "fullnameOverride"
+      ],
+      "title": "adminer",
+      "type": "object"
+    },
+    "affinity": {
+      "additionalProperties": false,
+      "required": [],
+      "title": "affinity",
+      "type": "object"
+    },
+    "autoscaling": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "default": false,
+          "title": "enabled",
+          "type": "boolean"
+        },
+        "maxReplicas": {
+          "default": 100,
+          "title": "maxReplicas",
+          "type": "integer"
+        },
+        "minReplicas": {
+          "default": 1,
+          "title": "minReplicas",
+          "type": "integer"
+        },
+        "targetCPUUtilizationPercentage": {
+          "default": 85,
+          "title": "targetCPUUtilizationPercentage",
+          "type": "integer"
+        },
+        "targetMemoryUtilizationPercentage": {
+          "default": 90,
+          "title": "targetMemoryUtilizationPercentage",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "enabled",
+        "minReplicas",
+        "maxReplicas",
+        "targetCPUUtilizationPercentage",
+        "targetMemoryUtilizationPercentage"
+      ],
+      "title": "autoscaling",
+      "type": "object"
+    },
+    "env": {
+      "additionalProperties": false,
+      "properties": {
+        "MYSQL_DATABASE": {
+          "default": "itop",
+          "title": "MYSQL_DATABASE",
+          "type": "string"
+        },
+        "MYSQL_HOST": {
+          "default": "mysql-master",
+          "title": "MYSQL_HOST",
+          "type": "string"
+        },
+        "MYSQL_PASSWORD": {
+          "default": "",
+          "title": "MYSQL_PASSWORD",
+          "type": "string"
+        },
+        "MYSQL_PORT": {
+          "default": "3306",
+          "title": "MYSQL_PORT",
+          "type": "string"
+        },
+        "MYSQL_USER": {
+          "default": "itop",
+          "title": "MYSQL_USER",
+          "type": "string"
+        }
+      },
+      "required": [
+        "MYSQL_HOST",
+        "MYSQL_PORT",
+        "MYSQL_DATABASE",
+        "MYSQL_USER",
+        "MYSQL_PASSWORD"
+      ],
+      "title": "env",
+      "type": "object"
+    },
+    "envVars": {
+      "items": {
+        "required": []
+      },
+      "title": "envVars",
+      "type": "array"
+    },
+    "fullnameOverride": {
+      "default": "",
+      "title": "fullnameOverride",
+      "type": "string"
+    },
+    "global": {
+      "additionalProperties": false,
+      "properties": {
+        "image": {
+          "additionalProperties": false,
+          "properties": {
+            "auth": {
+              "additionalProperties": false,
+              "properties": {
+                "enabled": {
+                  "default": false,
+                  "title": "enabled",
+                  "type": "boolean"
+                },
+                "password": {
+                  "default": "",
+                  "title": "password",
+                  "type": "string"
+                },
+                "username": {
+                  "default": "",
+                  "title": "username",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "enabled",
+                "username",
+                "password"
+              ],
+              "title": "auth",
+              "type": "object"
+            },
+            "registry": {
+              "default": "",
+              "title": "registry",
+              "type": "string"
+            }
+          },
+          "required": [
+            "registry",
+            "auth"
+          ],
+          "title": "image",
+          "type": "object"
+        },
+        "imagePullSecrets": {
+          "items": {
+            "required": []
+          },
+          "title": "imagePullSecrets",
+          "type": "array"
+        },
+        "security": {
+          "additionalProperties": false,
+          "properties": {
+            "allowInsecureImages": {
+              "default": true,
+              "title": "allowInsecureImages",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "allowInsecureImages"
+          ],
+          "title": "security",
+          "type": "object"
+        },
+        "storageClass": {
+          "default": "",
+          "title": "storageClass",
+          "type": "string"
+        }
+      },
+      "required": [
+        "image",
+        "imagePullSecrets",
+        "storageClass",
+        "security"
+      ],
+      "title": "global",
+      "type": "object"
+    },
+    "image": {
+      "additionalProperties": false,
+      "properties": {
+        "auth": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": false,
+              "title": "enabled",
+              "type": "boolean"
+            },
+            "password": {
+              "default": "",
+              "title": "password",
+              "type": "string"
+            },
+            "username": {
+              "default": "",
+              "title": "username",
+              "type": "string"
+            }
+          },
+          "required": [
+            "enabled",
+            "username",
+            "password"
+          ],
+          "title": "auth",
+          "type": "object"
+        },
+        "pullPolicy": {
+          "default": "IfNotPresent",
+          "title": "pullPolicy",
+          "type": "string"
+        },
+        "registry": {
+          "default": "docker.io",
+          "title": "registry",
+          "type": "string"
+        },
+        "repository": {
+          "default": "itsmfactory/itop",
+          "title": "repository",
+          "type": "string"
+        },
+        "tag": {
+          "default": "3.2.2-1",
+          "description": "Overrides the image tag whose default is the chart appVersion.",
+          "title": "tag",
+          "type": "string"
+        }
+      },
+      "required": [
+        "registry",
+        "repository",
+        "pullPolicy",
+        "tag",
+        "auth"
+      ],
+      "title": "image",
+      "type": "object"
+    },
+    "imagePullSecrets": {
+      "items": {
+        "required": []
+      },
+      "title": "imagePullSecrets",
+      "type": "array"
+    },
+    "ingress": {
+      "additionalProperties": false,
+      "properties": {
+        "annotations": {
+          "additionalProperties": false,
+          "required": [],
+          "title": "annotations",
+          "type": "object"
+        },
+        "className": {
+          "default": "",
+          "title": "className",
+          "type": "string"
+        },
+        "enabled": {
+          "default": false,
+          "title": "enabled",
+          "type": "boolean"
+        },
+        "hosts": {
+          "description": "kubernetes.io/ingress.class: nginx\nkubernetes.io/tls-acme: \"true\"",
+          "items": {
+            "anyOf": [
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "host": {
+                    "default": "chart-example.local",
+                    "title": "host",
+                    "type": "string"
+                  },
+                  "paths": {
+                    "items": {
+                      "anyOf": [
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "path": {
+                              "default": "/",
+                              "title": "path",
+                              "type": "string"
+                            },
+                            "pathType": {
+                              "default": "ImplementationSpecific",
+                              "title": "pathType",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "path",
+                            "pathType"
+                          ],
+                          "type": "object"
+                        }
+                      ],
+                      "required": []
+                    },
+                    "title": "paths",
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "host",
+                  "paths"
+                ],
+                "type": "object"
+              }
+            ],
+            "required": []
+          },
+          "title": "hosts",
+          "type": "array"
+        },
+        "tls": {
+          "items": {
+            "required": []
+          },
+          "title": "tls",
+          "type": "array"
+        }
+      },
+      "required": [
+        "enabled",
+        "className",
+        "annotations",
+        "hosts",
+        "tls"
+      ],
+      "title": "ingress",
+      "type": "object"
+    },
+    "livenessProbe": {
+      "additionalProperties": false,
+      "properties": {
+        "failureThreshold": {
+          "default": 3,
+          "title": "failureThreshold",
+          "type": "integer"
+        },
+        "initialDelaySeconds": {
+          "default": 60,
+          "title": "initialDelaySeconds",
+          "type": "integer"
+        },
+        "periodSeconds": {
+          "default": 30,
+          "title": "periodSeconds",
+          "type": "integer"
+        },
+        "timeoutSeconds": {
+          "default": 5,
+          "title": "timeoutSeconds",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "initialDelaySeconds",
+        "periodSeconds",
+        "timeoutSeconds",
+        "failureThreshold"
+      ],
+      "title": "livenessProbe",
+      "type": "object"
+    },
+    "mysql": {
+      "additionalProperties": false,
+      "properties": {
+        "architecture": {
+          "default": "replication",
+          "title": "architecture",
+          "type": "string"
+        },
+        "auth": {
+          "additionalProperties": false,
+          "properties": {
+            "createDatabase": {
+              "default": false,
+              "title": "createDatabase",
+              "type": "boolean"
+            },
+            "password": {
+              "default": "",
+              "title": "password",
+              "type": "string"
+            },
+            "replicationPassword": {
+              "default": "",
+              "title": "replicationPassword",
+              "type": "string"
+            },
+            "replicationUser": {
+              "default": "replicator",
+              "title": "replicationUser",
+              "type": "string"
+            },
+            "rootPassword": {
+              "default": "",
+              "title": "rootPassword",
+              "type": "string"
+            },
+            "username": {
+              "default": "itop",
+              "title": "username",
+              "type": "string"
+            }
+          },
+          "required": [
+            "rootPassword",
+            "replicationUser",
+            "replicationPassword",
+            "createDatabase",
+            "username",
+            "password"
+          ],
+          "title": "auth",
+          "type": "object"
+        },
+        "enabled": {
+          "default": true,
+          "title": "enabled",
+          "type": "boolean"
+        },
+        "fullnameOverride": {
+          "default": "mysql",
+          "title": "fullnameOverride",
+          "type": "string"
+        },
+        "image": {
+          "additionalProperties": false,
+          "properties": {
+            "repository": {
+              "default": "bitnamilegacy/mysql",
+              "title": "repository",
+              "type": "string"
+            }
+          },
+          "required": [
+            "repository"
+          ],
+          "title": "image",
+          "type": "object"
+        },
+        "primary": {
+          "additionalProperties": false,
+          "properties": {
+            "extraFlags": {
+              "default": "--max_connections=200",
+              "title": "extraFlags",
+              "type": "string"
+            },
+            "name": {
+              "default": "master",
+              "title": "name",
+              "type": "string"
+            },
+            "persistence": {
+              "additionalProperties": false,
+              "properties": {
+                "enabled": {
+                  "default": true,
+                  "title": "enabled",
+                  "type": "boolean"
+                },
+                "size": {
+                  "default": "10Gi",
+                  "title": "size",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "enabled",
+                "size"
+              ],
+              "title": "persistence",
+              "type": "object"
+            },
+            "resourcesPreset": {
+              "default": "medium",
+              "title": "resourcesPreset",
+              "type": "string"
+            },
+            "startupProbe": {
+              "additionalProperties": false,
+              "properties": {
+                "initialDelaySeconds": {
+                  "default": 60,
+                  "title": "initialDelaySeconds",
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "initialDelaySeconds"
+              ],
+              "title": "startupProbe",
+              "type": "object"
+            }
+          },
+          "required": [
+            "name",
+            "persistence",
+            "startupProbe",
+            "resourcesPreset",
+            "extraFlags"
+          ],
+          "title": "primary",
+          "type": "object"
+        },
+        "secondary": {
+          "additionalProperties": false,
+          "properties": {
+            "extraFlags": {
+              "default": "--max_connections=200",
+              "title": "extraFlags",
+              "type": "string"
+            },
+            "name": {
+              "default": "replicas",
+              "title": "name",
+              "type": "string"
+            },
+            "persistence": {
+              "additionalProperties": false,
+              "properties": {
+                "enabled": {
+                  "default": true,
+                  "title": "enabled",
+                  "type": "boolean"
+                },
+                "size": {
+                  "default": "5Gi",
+                  "title": "size",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "enabled",
+                "size"
+              ],
+              "title": "persistence",
+              "type": "object"
+            },
+            "replicaCount": {
+              "default": 2,
+              "title": "replicaCount",
+              "type": "integer"
+            },
+            "resourcesPreset": {
+              "default": "small",
+              "title": "resourcesPreset",
+              "type": "string"
+            },
+            "startupProbe": {
+              "additionalProperties": false,
+              "properties": {
+                "initialDelaySeconds": {
+                  "default": 60,
+                  "title": "initialDelaySeconds",
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "initialDelaySeconds"
+              ],
+              "title": "startupProbe",
+              "type": "object"
+            }
+          },
+          "required": [
+            "name",
+            "replicaCount",
+            "persistence",
+            "startupProbe",
+            "resourcesPreset",
+            "extraFlags"
+          ],
+          "title": "secondary",
+          "type": "object"
+        }
+      },
+      "required": [
+        "enabled",
+        "fullnameOverride",
+        "image",
+        "architecture",
+        "auth",
+        "primary",
+        "secondary"
+      ],
+      "title": "mysql",
+      "type": "object"
+    },
+    "nameOverride": {
+      "default": "",
+      "title": "nameOverride",
+      "type": "string"
+    },
+    "nodeSelector": {
+      "additionalProperties": false,
+      "required": [],
+      "title": "nodeSelector",
+      "type": "object"
+    },
+    "persistence": {
+      "additionalProperties": false,
+      "properties": {
+        "data": {
+          "additionalProperties": false,
+          "properties": {
+            "accessModes": {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  }
+                ],
+                "required": []
+              },
+              "title": "accessModes",
+              "type": "array"
+            },
+            "enabled": {
+              "default": true,
+              "title": "enabled",
+              "type": "boolean"
+            },
+            "keep": {
+              "default": true,
+              "title": "keep",
+              "type": "boolean"
+            },
+            "paths": {
+              "additionalProperties": false,
+              "properties": {
+                "apacheLogs": {
+                  "default": "/var/log/apache2",
+                  "title": "apacheLogs",
+                  "type": "string"
+                },
+                "conf": {
+                  "default": "/var/www/html/itop/conf",
+                  "title": "conf",
+                  "type": "string"
+                },
+                "data": {
+                  "default": "/var/www/html/itop/data",
+                  "title": "data",
+                  "type": "string"
+                },
+                "envProduction": {
+                  "default": "/var/www/html/itop/env-production",
+                  "title": "envProduction",
+                  "type": "string"
+                },
+                "extensions": {
+                  "default": "/var/www/html/itop/extensions",
+                  "title": "extensions",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "conf",
+                "data",
+                "envProduction",
+                "extensions",
+                "apacheLogs"
+              ],
+              "title": "paths",
+              "type": "object"
+            },
+            "size": {
+              "default": "20Gi",
+              "title": "size",
+              "type": "string"
+            },
+            "storageClass": {
+              "default": "",
+              "title": "storageClass",
+              "type": "string"
+            }
+          },
+          "required": [
+            "enabled",
+            "storageClass",
+            "size",
+            "keep",
+            "accessModes",
+            "paths"
+          ],
+          "title": "data",
+          "type": "object"
+        },
+        "phpConfig": {
+          "additionalProperties": false,
+          "properties": {
+            "mountPath": {
+              "default": "/etc/php/8.1/apache2/conf.d/99-redis-session.ini",
+              "title": "mountPath",
+              "type": "string"
+            }
+          },
+          "required": [
+            "mountPath"
+          ],
+          "title": "phpConfig",
+          "type": "object"
+        }
+      },
+      "required": [
+        "data",
+        "phpConfig"
+      ],
+      "title": "persistence",
+      "type": "object"
+    },
+    "phpConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "redisSession": {
+          "default": "session.save_handler = redis\nsession.save_path = \"tcp://redis-master:6379\"\nredis.session.locking_enabled = 1\nredis.session.lock_retries = 10\nredis.session.lock_wait_time = 2000\n",
+          "title": "redisSession",
+          "type": "string"
+        }
+      },
+      "required": [
+        "redisSession"
+      ],
+      "title": "phpConfig",
+      "type": "object"
+    },
+    "podAnnotations": {
+      "additionalProperties": false,
+      "required": [],
+      "title": "podAnnotations",
+      "type": "object"
+    },
+    "podSecurityContext": {
+      "additionalProperties": false,
+      "properties": {
+        "fsGroup": {
+          "default": 33,
+          "title": "fsGroup",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "fsGroup"
+      ],
+      "title": "podSecurityContext",
+      "type": "object"
+    },
+    "readinessProbe": {
+      "additionalProperties": false,
+      "properties": {
+        "failureThreshold": {
+          "default": 3,
+          "title": "failureThreshold",
+          "type": "integer"
+        },
+        "initialDelaySeconds": {
+          "default": 30,
+          "title": "initialDelaySeconds",
+          "type": "integer"
+        },
+        "periodSeconds": {
+          "default": 10,
+          "title": "periodSeconds",
+          "type": "integer"
+        },
+        "timeoutSeconds": {
+          "default": 5,
+          "title": "timeoutSeconds",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "initialDelaySeconds",
+        "periodSeconds",
+        "timeoutSeconds",
+        "failureThreshold"
+      ],
+      "title": "readinessProbe",
+      "type": "object"
+    },
+    "redis": {
+      "additionalProperties": false,
+      "properties": {
+        "architecture": {
+          "default": "replication",
+          "title": "architecture",
+          "type": "string"
+        },
+        "auth": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": false,
+              "title": "enabled",
+              "type": "boolean"
+            },
+            "sentinel": {
+              "default": false,
+              "title": "sentinel",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "enabled",
+            "sentinel"
+          ],
+          "title": "auth",
+          "type": "object"
+        },
+        "enabled": {
+          "default": true,
+          "title": "enabled",
+          "type": "boolean"
+        },
+        "fullnameOverride": {
+          "default": "redis",
+          "title": "fullnameOverride",
+          "type": "string"
+        },
+        "image": {
+          "additionalProperties": false,
+          "properties": {
+            "repository": {
+              "default": "bitnamilegacy/redis",
+              "title": "repository",
+              "type": "string"
+            }
+          },
+          "required": [
+            "repository"
+          ],
+          "title": "image",
+          "type": "object"
+        },
+        "kubectl": {
+          "additionalProperties": false,
+          "properties": {
+            "image": {
+              "additionalProperties": false,
+              "properties": {
+                "repository": {
+                  "default": "bitnamilegacy/kubectl",
+                  "title": "repository",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "repository"
+              ],
+              "title": "image",
+              "type": "object"
+            }
+          },
+          "required": [
+            "image"
+          ],
+          "title": "kubectl",
+          "type": "object"
+        },
+        "master": {
+          "additionalProperties": false,
+          "properties": {
+            "automountServiceAccountToken": {
+              "default": true,
+              "title": "automountServiceAccountToken",
+              "type": "boolean"
+            },
+            "persistence": {
+              "additionalProperties": false,
+              "properties": {
+                "size": {
+                  "default": "5Gi",
+                  "title": "size",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "size"
+              ],
+              "title": "persistence",
+              "type": "object"
+            },
+            "resourcesPreset": {
+              "default": "small",
+              "title": "resourcesPreset",
+              "type": "string"
+            },
+            "serviceAccount": {
+              "additionalProperties": false,
+              "properties": {
+                "automountServiceAccountToken": {
+                  "default": true,
+                  "title": "automountServiceAccountToken",
+                  "type": "boolean"
+                },
+                "create": {
+                  "default": true,
+                  "title": "create",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "create",
+                "automountServiceAccountToken"
+              ],
+              "title": "serviceAccount",
+              "type": "object"
+            }
+          },
+          "required": [
+            "automountServiceAccountToken",
+            "persistence",
+            "resourcesPreset",
+            "serviceAccount"
+          ],
+          "title": "master",
+          "type": "object"
+        },
+        "rbac": {
+          "additionalProperties": false,
+          "properties": {
+            "create": {
+              "default": true,
+              "title": "create",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "create"
+          ],
+          "title": "rbac",
+          "type": "object"
+        },
+        "replica": {
+          "additionalProperties": false,
+          "properties": {
+            "automountServiceAccountToken": {
+              "default": true,
+              "title": "automountServiceAccountToken",
+              "type": "boolean"
+            },
+            "persistence": {
+              "additionalProperties": false,
+              "properties": {
+                "size": {
+                  "default": "5Gi",
+                  "title": "size",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "size"
+              ],
+              "title": "persistence",
+              "type": "object"
+            },
+            "replicaCount": {
+              "default": 3,
+              "title": "replicaCount",
+              "type": "integer"
+            },
+            "resourcesPreset": {
+              "default": "small",
+              "title": "resourcesPreset",
+              "type": "string"
+            },
+            "serviceAccount": {
+              "additionalProperties": false,
+              "properties": {
+                "automountServiceAccountToken": {
+                  "default": true,
+                  "title": "automountServiceAccountToken",
+                  "type": "boolean"
+                },
+                "create": {
+                  "default": true,
+                  "title": "create",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "create",
+                "automountServiceAccountToken"
+              ],
+              "title": "serviceAccount",
+              "type": "object"
+            }
+          },
+          "required": [
+            "replicaCount",
+            "automountServiceAccountToken",
+            "persistence",
+            "resourcesPreset",
+            "serviceAccount"
+          ],
+          "title": "replica",
+          "type": "object"
+        },
+        "sentinel": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "title": "enabled",
+              "type": "boolean"
+            },
+            "image": {
+              "additionalProperties": false,
+              "properties": {
+                "repository": {
+                  "default": "bitnamilegacy/redis-sentinel",
+                  "title": "repository",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "repository"
+              ],
+              "title": "image",
+              "type": "object"
+            },
+            "masterService": {
+              "additionalProperties": false,
+              "properties": {
+                "enabled": {
+                  "default": true,
+                  "title": "enabled",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "enabled"
+              ],
+              "title": "masterService",
+              "type": "object"
+            },
+            "service": {
+              "additionalProperties": false,
+              "properties": {
+                "createMaster": {
+                  "default": true,
+                  "title": "createMaster",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "createMaster"
+              ],
+              "title": "service",
+              "type": "object"
+            }
+          },
+          "required": [
+            "enabled",
+            "image",
+            "service",
+            "masterService"
+          ],
+          "title": "sentinel",
+          "type": "object"
+        },
+        "serviceAccount": {
+          "additionalProperties": false,
+          "properties": {
+            "automountServiceAccountToken": {
+              "default": true,
+              "title": "automountServiceAccountToken",
+              "type": "boolean"
+            },
+            "create": {
+              "default": true,
+              "title": "create",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "create",
+            "automountServiceAccountToken"
+          ],
+          "title": "serviceAccount",
+          "type": "object"
+        }
+      },
+      "required": [
+        "enabled",
+        "fullnameOverride",
+        "image",
+        "architecture",
+        "auth",
+        "master",
+        "replica",
+        "sentinel",
+        "kubectl",
+        "rbac",
+        "serviceAccount"
+      ],
+      "title": "redis",
+      "type": "object"
+    },
+    "replicaCount": {
+      "default": 1,
+      "title": "replicaCount",
+      "type": "integer"
+    },
+    "resources": {
+      "additionalProperties": false,
+      "required": [],
+      "title": "resources",
+      "type": "object"
+    },
+    "securityContext": {
+      "additionalProperties": false,
+      "properties": {
+        "allowPrivilegeEscalation": {
+          "default": false,
+          "title": "allowPrivilegeEscalation",
+          "type": "boolean"
+        },
+        "capabilities": {
+          "additionalProperties": false,
+          "properties": {
+            "add": {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ],
+                "required": []
+              },
+              "title": "add",
+              "type": "array"
+            },
+            "drop": {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  }
+                ],
+                "required": []
+              },
+              "title": "drop",
+              "type": "array"
+            }
+          },
+          "required": [
+            "drop",
+            "add"
+          ],
+          "title": "capabilities",
+          "type": "object"
+        }
+      },
+      "required": [
+        "allowPrivilegeEscalation",
+        "capabilities"
+      ],
+      "title": "securityContext",
+      "type": "object"
+    },
+    "service": {
+      "additionalProperties": false,
+      "properties": {
+        "port": {
+          "default": 80,
+          "title": "port",
+          "type": "integer"
+        },
+        "type": {
+          "default": "ClusterIP",
+          "title": "type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "port"
+      ],
+      "title": "service",
+      "type": "object"
+    },
+    "serviceAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "annotations": {
+          "additionalProperties": false,
+          "description": "Annotations to add to the service account",
+          "required": [],
+          "title": "annotations",
+          "type": "object"
+        },
+        "automountServiceAccountToken": {
+          "default": false,
+          "title": "automountServiceAccountToken",
+          "type": "boolean"
+        },
+        "create": {
+          "default": true,
+          "description": "Specifies whether a service account should be created",
+          "title": "create",
+          "type": "boolean"
+        },
+        "name": {
+          "default": "",
+          "description": "The name of the service account to use.\nIf not set and create is true, a name is generated using the fullname template",
+          "title": "name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "create",
+        "annotations",
+        "name",
+        "automountServiceAccountToken"
+      ],
+      "title": "serviceAccount",
+      "type": "object"
+    },
+    "startupProbe": {
+      "additionalProperties": false,
+      "properties": {
+        "failureThreshold": {
+          "default": 10,
+          "title": "failureThreshold",
+          "type": "integer"
+        },
+        "initialDelaySeconds": {
+          "default": 30,
+          "title": "initialDelaySeconds",
+          "type": "integer"
+        },
+        "periodSeconds": {
+          "default": 10,
+          "title": "periodSeconds",
+          "type": "integer"
+        },
+        "timeoutSeconds": {
+          "default": 5,
+          "title": "timeoutSeconds",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "initialDelaySeconds",
+        "periodSeconds",
+        "timeoutSeconds",
+        "failureThreshold"
+      ],
+      "title": "startupProbe",
+      "type": "object"
+    },
+    "tolerations": {
+      "items": {
+        "required": []
+      },
+      "title": "tolerations",
+      "type": "array"
+    },
+    "volumeMounts": {
+      "items": {
+        "required": []
+      },
+      "title": "volumeMounts",
+      "type": "array"
+    },
+    "volumes": {
+      "items": {
+        "required": []
+      },
+      "title": "volumes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "global",
+    "replicaCount",
+    "image",
+    "imagePullSecrets",
+    "nameOverride",
+    "fullnameOverride",
+    "serviceAccount",
+    "podAnnotations",
+    "podSecurityContext",
+    "securityContext",
+    "service",
+    "ingress",
+    "resources",
+    "autoscaling",
+    "nodeSelector",
+    "tolerations",
+    "affinity",
+    "envVars",
+    "env",
+    "persistence",
+    "phpConfig",
+    "livenessProbe",
+    "readinessProbe",
+    "startupProbe",
+    "volumes",
+    "volumeMounts",
+    "mysql",
+    "redis",
+    "adminer"
+  ],
+  "type": "object"
+}

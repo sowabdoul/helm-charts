@@ -1,0 +1,509 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "properties": {
+    "config": {
+      "additionalProperties": false,
+      "properties": {
+        "dns": {
+          "additionalProperties": false,
+          "properties": {
+            "mx_records": {
+              "description": "Specify the DNS records that you have configured. Refer to the documentation at\nhttps://github.com/atech/postal/wiki/Domains-\u0026-DNS-Configuration for further\ninformation about these.",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  }
+                ],
+                "required": []
+              },
+              "title": "mx_records",
+              "type": "array"
+            },
+            "return_path_domain": {
+              "default": "rp.example.com",
+              "title": "return_path_domain",
+              "type": "string"
+            },
+            "route_domain": {
+              "default": "routes.example.com",
+              "title": "route_domain",
+              "type": "string"
+            },
+            "spf_include": {
+              "default": "spf.example.com",
+              "title": "spf_include",
+              "type": "string"
+            },
+            "track_domain": {
+              "default": "track.example.com",
+              "title": "track_domain",
+              "type": "string"
+            }
+          },
+          "required": [
+            "mx_records",
+            "spf_include",
+            "return_path_domain",
+            "route_domain",
+            "track_domain"
+          ],
+          "title": "dns",
+          "type": "object"
+        },
+        "main_db": {
+          "additionalProperties": false,
+          "properties": {
+            "database": {
+              "default": "postal",
+              "title": "database",
+              "type": "string"
+            },
+            "host": {
+              "default": "mysql-master",
+              "title": "host",
+              "type": "string"
+            },
+            "password": {
+              "default": "",
+              "title": "password",
+              "type": "string"
+            },
+            "username": {
+              "default": "postal",
+              "title": "username",
+              "type": "string"
+            }
+          },
+          "required": [
+            "host",
+            "username",
+            "password",
+            "database"
+          ],
+          "title": "main_db",
+          "type": "object"
+        },
+        "message_db": {
+          "additionalProperties": false,
+          "properties": {
+            "database": {
+              "default": "postal_messages",
+              "title": "database",
+              "type": "string"
+            },
+            "host": {
+              "default": "mysql-master",
+              "title": "host",
+              "type": "string"
+            },
+            "password": {
+              "default": "",
+              "title": "password",
+              "type": "string"
+            },
+            "username": {
+              "default": "postal",
+              "title": "username",
+              "type": "string"
+            }
+          },
+          "required": [
+            "host",
+            "username",
+            "password",
+            "database"
+          ],
+          "title": "message_db",
+          "type": "object"
+        },
+        "postal": {
+          "additionalProperties": false,
+          "properties": {
+            "smtp_hostname": {
+              "default": "example.com",
+              "title": "smtp_hostname",
+              "type": "string"
+            },
+            "web_hostname": {
+              "default": "example.com",
+              "title": "web_hostname",
+              "type": "string"
+            },
+            "web_protocol": {
+              "default": "https",
+              "title": "web_protocol",
+              "type": "string"
+            }
+          },
+          "required": [
+            "web_hostname",
+            "web_protocol",
+            "smtp_hostname"
+          ],
+          "title": "postal",
+          "type": "object"
+        },
+        "rails": {
+          "additionalProperties": false,
+          "properties": {
+            "secret_key": {
+              "default": "f1e4a061c0f3894a65d0335ce9d56ffa16c8b4d8dd2a101d875f703358790fc69b5a27f854dfff895b6d86cb9994ed8506e0cdec1a2cd5a1c840bf98b47431cd08de05e33a12f53219dcb795e4d72685647b40eb707555c242a1facc40b19c4cd3a35b0ca91507a672d3f7bce48a0dad81c930320001b22ba6fdc468f9a8ce08",
+              "description": "This is generated automatically by the config initialization. It should be a random\nstring unique to your installation.",
+              "title": "secret_key",
+              "type": "string"
+            }
+          },
+          "required": [
+            "secret_key"
+          ],
+          "title": "rails",
+          "type": "object"
+        },
+        "smtp": {
+          "additionalProperties": false,
+          "properties": {
+            "from_address": {
+              "default": "postal.example.com",
+              "title": "from_address",
+              "type": "string"
+            },
+            "from_name": {
+              "default": "Postal",
+              "title": "from_name",
+              "type": "string"
+            },
+            "host": {
+              "default": "127.0.0.1",
+              "description": "Specify an SMTP server that can be used to send messages from the Postal management\nsystem to users. You can configure this to use a Postal mail server once the\nyour installation has been set up.",
+              "title": "host",
+              "type": "string"
+            },
+            "password": {
+              "default": "",
+              "title": "password",
+              "type": "string"
+            },
+            "port": {
+              "default": 2525,
+              "title": "port",
+              "type": "integer"
+            },
+            "username": {
+              "default": "",
+              "title": "username",
+              "type": "string"
+            }
+          },
+          "required": [
+            "host",
+            "port",
+            "username",
+            "password",
+            "from_name",
+            "from_address"
+          ],
+          "title": "smtp",
+          "type": "object"
+        },
+        "smtp_server": {
+          "additionalProperties": false,
+          "properties": {
+            "default_bind_address": {
+              "default": "::",
+              "title": "default_bind_address",
+              "type": "string"
+            }
+          },
+          "required": [
+            "default_bind_address"
+          ],
+          "title": "smtp_server",
+          "type": "object"
+        },
+        "version": {
+          "default": 2,
+          "title": "version",
+          "type": "integer"
+        },
+        "web_server": {
+          "additionalProperties": false,
+          "properties": {
+            "default_bind_address": {
+              "default": "0.0.0.0",
+              "title": "default_bind_address",
+              "type": "string"
+            }
+          },
+          "required": [
+            "default_bind_address"
+          ],
+          "title": "web_server",
+          "type": "object"
+        }
+      },
+      "required": [
+        "version",
+        "postal",
+        "main_db",
+        "message_db",
+        "smtp_server",
+        "dns",
+        "smtp",
+        "rails",
+        "web_server"
+      ],
+      "title": "config",
+      "type": "object"
+    },
+    "global": {
+      "description": "Global values are values that can be accessed from any chart or subchart by exactly the same name.",
+      "required": [],
+      "title": "global",
+      "type": "object"
+    },
+    "image": {
+      "default": "ghcr.io/postalserver/postal",
+      "title": "image",
+      "type": "string"
+    },
+    "imagePullPolicy": {
+      "default": "Always",
+      "title": "imagePullPolicy",
+      "type": "string"
+    },
+    "imageTag": {
+      "default": "3.3.4",
+      "title": "imageTag",
+      "type": "string"
+    },
+    "resources": {
+      "additionalProperties": false,
+      "required": [],
+      "title": "resources",
+      "type": "object"
+    },
+    "signingKey": {
+      "default": "# paste key here\n",
+      "description": "openssl genrsa -out path/to/signing.key 2018",
+      "title": "signingKey",
+      "type": "string"
+    },
+    "smtp": {
+      "additionalProperties": false,
+      "properties": {
+        "replicas": {
+          "default": 1,
+          "title": "replicas",
+          "type": "integer"
+        },
+        "service": {
+          "additionalProperties": false,
+          "properties": {
+            "loadBalancerIP": {
+              "default": "",
+              "title": "loadBalancerIP",
+              "type": "string"
+            },
+            "type": {
+              "default": "LoadBalancer",
+              "title": "type",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "loadBalancerIP"
+          ],
+          "title": "service",
+          "type": "object"
+        }
+      },
+      "required": [
+        "replicas",
+        "service"
+      ],
+      "title": "smtp",
+      "type": "object"
+    },
+    "web": {
+      "additionalProperties": false,
+      "properties": {
+        "ingress": {
+          "additionalProperties": false,
+          "properties": {
+            "annotations": {
+              "additionalProperties": false,
+              "properties": {
+                "kubernetes.io/tls-acme": {
+                  "default": "true",
+                  "title": "kubernetes.io/tls-acme",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "kubernetes.io/tls-acme"
+              ],
+              "title": "annotations",
+              "type": "object"
+            },
+            "className": {
+              "default": "nginx",
+              "title": "className",
+              "type": "string"
+            },
+            "enabled": {
+              "default": true,
+              "title": "enabled",
+              "type": "boolean"
+            },
+            "hosts": {
+              "items": {
+                "anyOf": [
+                  {
+                    "additionalProperties": false,
+                    "properties": {
+                      "host": {
+                        "default": "example.com",
+                        "title": "host",
+                        "type": "string"
+                      },
+                      "paths": {
+                        "items": {
+                          "anyOf": [
+                            {
+                              "additionalProperties": false,
+                              "properties": {
+                                "path": {
+                                  "default": "/",
+                                  "title": "path",
+                                  "type": "string"
+                                },
+                                "pathType": {
+                                  "default": "ImplementationSpecific",
+                                  "title": "pathType",
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "path",
+                                "pathType"
+                              ],
+                              "type": "object"
+                            }
+                          ],
+                          "required": []
+                        },
+                        "title": "paths",
+                        "type": "array"
+                      }
+                    },
+                    "required": [
+                      "host",
+                      "paths"
+                    ],
+                    "type": "object"
+                  }
+                ],
+                "required": []
+              },
+              "title": "hosts",
+              "type": "array"
+            },
+            "labels": {
+              "additionalProperties": false,
+              "required": [],
+              "title": "labels",
+              "type": "object"
+            },
+            "tls": {
+              "items": {
+                "anyOf": [
+                  {
+                    "additionalProperties": false,
+                    "properties": {
+                      "hosts": {
+                        "items": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            }
+                          ],
+                          "required": []
+                        },
+                        "title": "hosts",
+                        "type": "array"
+                      },
+                      "secretName": {
+                        "default": "postal-web-tls",
+                        "title": "secretName",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "secretName",
+                      "hosts"
+                    ],
+                    "type": "object"
+                  }
+                ],
+                "required": []
+              },
+              "title": "tls",
+              "type": "array"
+            }
+          },
+          "required": [
+            "enabled",
+            "className",
+            "annotations",
+            "labels",
+            "hosts",
+            "tls"
+          ],
+          "title": "ingress",
+          "type": "object"
+        },
+        "replicas": {
+          "default": 1,
+          "title": "replicas",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "replicas",
+        "ingress"
+      ],
+      "title": "web",
+      "type": "object"
+    },
+    "worker": {
+      "additionalProperties": false,
+      "properties": {
+        "replicas": {
+          "default": 1,
+          "title": "replicas",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "replicas"
+      ],
+      "title": "worker",
+      "type": "object"
+    }
+  },
+  "required": [
+    "image",
+    "imageTag",
+    "imagePullPolicy",
+    "resources",
+    "config",
+    "signingKey",
+    "web",
+    "smtp",
+    "worker"
+  ],
+  "type": "object"
+}

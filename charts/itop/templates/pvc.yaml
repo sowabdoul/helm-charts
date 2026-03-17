@@ -1,0 +1,19 @@
+{{- if .Values.persistence.data.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "itop.fullname" . }}-data
+  labels:
+    {{- include "itop.labels" . | nindent 4 }}
+  {{- if .Values.persistence.data.keep }}
+  annotations:
+    "helm.sh/resource-policy": keep
+  {{- end }}
+spec:
+  storageClassName: {{ include "itop.data.storageClass" . }}
+  accessModes: {{ .Values.persistence.data.accessModes | toYaml | nindent 4 }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.data.size }}
+  volumeMode: Filesystem
+{{- end }}

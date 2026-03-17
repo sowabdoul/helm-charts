@@ -1,0 +1,254 @@
+# Default values for itop.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+global:
+  image:
+    registry: ""
+    auth:
+      enabled: false
+      username: ""
+      password: ""
+  imagePullSecrets: []
+  storageClass: ""
+  security:
+    allowInsecureImages: true
+
+replicaCount: 1
+
+image:
+  registry: docker.io
+  repository: itsmfactory/itop
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "3.2.2-1"
+  auth:
+    enabled: false
+    username: ""
+    password: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+  automountServiceAccountToken: false
+
+podAnnotations: {}
+
+podSecurityContext:
+  fsGroup: 33
+  # runAsNonRoot: true
+  # runAsUser: 33
+  # runAsGroup: 33
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+    add:
+      - NET_BIND_SERVICE
+      - CHOWN
+      - SETUID
+      - SETGID
+      - DAC_OVERRIDE
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 33
+  # runAsGroup: 33
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 2
+  #   memory: 1Gi
+  # requests:
+  #   cpu: 1
+  #   memory: 1Gi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 85
+  targetMemoryUtilizationPercentage: 90
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+envVars: []
+# - name: MYSQL_PASSWORD
+#   valueFrom:
+#     secretKeyRef:
+#       name: mysql
+#       key: mysql-password
+
+env:
+  MYSQL_HOST: "mysql-master"
+  MYSQL_PORT: "3306"
+  MYSQL_DATABASE: "itop"
+  MYSQL_USER: "itop"
+  MYSQL_PASSWORD: ""
+
+persistence:
+  data:
+    enabled: true
+    storageClass: ""
+    size: 20Gi
+    keep: true
+    accessModes:
+      - ReadWriteMany
+    paths:
+      conf: /var/www/html/itop/conf
+      data: /var/www/html/itop/data
+      envProduction: /var/www/html/itop/env-production
+      extensions: /var/www/html/itop/extensions
+      apacheLogs: /var/log/apache2
+  phpConfig:
+    mountPath: /etc/php/8.1/apache2/conf.d/99-redis-session.ini
+
+phpConfig:
+  redisSession: |
+    session.save_handler = redis
+    session.save_path = "tcp://redis-master:6379"
+    redis.session.locking_enabled = 1
+    redis.session.lock_retries = 10
+    redis.session.lock_wait_time = 2000
+
+livenessProbe:
+  initialDelaySeconds: 60
+  periodSeconds: 30
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+readinessProbe:
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+startupProbe:
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 10
+
+volumes: []
+
+volumeMounts: []
+
+mysql:
+  enabled: true
+  fullnameOverride: mysql
+  image:
+    repository: bitnamilegacy/mysql
+  architecture: replication
+  auth:
+    rootPassword: ""
+    replicationUser: replicator
+    replicationPassword: ""
+    createDatabase: false
+    username: itop
+    password: ""
+  primary:
+    name: master
+    persistence:
+      enabled: true
+      size: 10Gi
+    startupProbe:
+      initialDelaySeconds: 60
+    resourcesPreset: "medium"
+    extraFlags: "--max_connections=200"
+  secondary:
+    name: replicas
+    replicaCount: 2
+    persistence:
+      enabled: true
+      size: 5Gi
+    startupProbe:
+      initialDelaySeconds: 60
+    resourcesPreset: "small"
+    extraFlags: "--max_connections=200"
+
+redis:
+  enabled: true
+  fullnameOverride: redis
+  image:
+    repository: bitnamilegacy/redis
+  architecture: replication
+  auth:
+    enabled: false
+    sentinel: false
+  master:
+    automountServiceAccountToken: true
+    persistence:
+      size: 5Gi
+    resourcesPreset: "small"
+    serviceAccount:
+      create: true
+      automountServiceAccountToken: true
+  replica:
+    replicaCount: 3
+    automountServiceAccountToken: true
+    persistence:
+      size: 5Gi
+    resourcesPreset: "small"
+    serviceAccount:
+      create: true
+      automountServiceAccountToken: true
+  sentinel:
+    enabled: true
+    image:
+      repository: bitnamilegacy/redis-sentinel
+    service:
+      createMaster: true
+    masterService:
+      enabled: true
+  kubectl:
+    image:
+      repository: bitnamilegacy/kubectl
+  rbac:
+    create: true
+  serviceAccount:
+    create: true
+    automountServiceAccountToken: true
+
+adminer:
+  enabled: false
+  fullnameOverride: adminer
+  # service:
+  #   type: NodePort

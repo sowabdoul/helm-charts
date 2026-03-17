@@ -1,0 +1,886 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "properties": {
+    "adminer": {
+      "additionalProperties": false,
+      "description": "Adminer configuration (paradeum-team chart)  ",
+      "properties": {
+        "enabled": {
+          "default": true,
+          "title": "enabled",
+          "type": "boolean"
+        },
+        "fullnameOverride": {
+          "default": "adminer",
+          "title": "fullnameOverride",
+          "type": "string"
+        }
+      },
+      "required": [
+        "enabled",
+        "fullnameOverride"
+      ],
+      "title": "adminer",
+      "type": "object"
+    },
+    "affinity": {
+      "additionalProperties": false,
+      "required": [],
+      "title": "affinity",
+      "type": "object"
+    },
+    "autoscaling": {
+      "additionalProperties": false,
+      "description": "Autoscaling",
+      "properties": {
+        "enabled": {
+          "default": false,
+          "title": "enabled",
+          "type": "boolean"
+        },
+        "maxReplicas": {
+          "default": 5,
+          "title": "maxReplicas",
+          "type": "integer"
+        },
+        "minReplicas": {
+          "default": 1,
+          "title": "minReplicas",
+          "type": "integer"
+        },
+        "targetCPUUtilizationPercentage": {
+          "default": 70,
+          "title": "targetCPUUtilizationPercentage",
+          "type": "integer"
+        },
+        "targetMemoryUtilizationPercentage": {
+          "default": 80,
+          "title": "targetMemoryUtilizationPercentage",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "enabled",
+        "minReplicas",
+        "maxReplicas",
+        "targetCPUUtilizationPercentage",
+        "targetMemoryUtilizationPercentage"
+      ],
+      "title": "autoscaling",
+      "type": "object"
+    },
+    "cron": {
+      "additionalProperties": false,
+      "description": "Cron Configuration",
+      "properties": {
+        "enabled": {
+          "default": true,
+          "title": "enabled",
+          "type": "boolean"
+        },
+        "image": {
+          "additionalProperties": false,
+          "properties": {
+            "repository": {
+              "default": "firefart/requesttracker",
+              "title": "repository",
+              "type": "string"
+            },
+            "tag": {
+              "default": "5.0.8",
+              "title": "tag",
+              "type": "string"
+            }
+          },
+          "required": [
+            "repository",
+            "tag"
+          ],
+          "title": "image",
+          "type": "object"
+        },
+        "mailto": {
+          "default": "rt@example.com",
+          "title": "mailto",
+          "type": "string"
+        },
+        "persistence": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "title": "enabled",
+              "type": "boolean"
+            },
+            "size": {
+              "default": "100Mi",
+              "title": "size",
+              "type": "string"
+            },
+            "storageClass": {
+              "default": "",
+              "title": "storageClass",
+              "type": "string"
+            }
+          },
+          "required": [
+            "enabled",
+            "storageClass",
+            "size"
+          ],
+          "title": "persistence",
+          "type": "object"
+        }
+      },
+      "required": [
+        "enabled",
+        "mailto",
+        "image",
+        "persistence"
+      ],
+      "title": "cron",
+      "type": "object"
+    },
+    "fullnameOverride": {
+      "default": "",
+      "title": "fullnameOverride",
+      "type": "string"
+    },
+    "getmail": {
+      "additionalProperties": false,
+      "description": "GetMail Configuration",
+      "properties": {
+        "enabled": {
+          "default": false,
+          "title": "enabled",
+          "type": "boolean"
+        },
+        "password": {
+          "default": "",
+          "title": "password",
+          "type": "string"
+        },
+        "rt_url": {
+          "default": "http://localhost/",
+          "title": "rt_url",
+          "type": "string"
+        },
+        "server": {
+          "default": "imap.gmail.com",
+          "title": "server",
+          "type": "string"
+        },
+        "user": {
+          "default": "rt@example.com",
+          "title": "user",
+          "type": "string"
+        }
+      },
+      "required": [
+        "enabled",
+        "server",
+        "user",
+        "password",
+        "rt_url"
+      ],
+      "title": "getmail",
+      "type": "object"
+    },
+    "global": {
+      "description": "Global values are values that can be accessed from any chart or subchart by exactly the same name.",
+      "required": [],
+      "title": "global",
+      "type": "object"
+    },
+    "image": {
+      "additionalProperties": false,
+      "properties": {
+        "pullPolicy": {
+          "default": "IfNotPresent",
+          "title": "pullPolicy",
+          "type": "string"
+        },
+        "repository": {
+          "default": "firefart/requesttracker",
+          "title": "repository",
+          "type": "string"
+        },
+        "tag": {
+          "default": "5.0.8",
+          "title": "tag",
+          "type": "string"
+        }
+      },
+      "required": [
+        "repository",
+        "tag",
+        "pullPolicy"
+      ],
+      "title": "image",
+      "type": "object"
+    },
+    "ingress": {
+      "additionalProperties": false,
+      "description": "Ingress",
+      "properties": {
+        "annotations": {
+          "additionalProperties": false,
+          "required": [],
+          "title": "annotations",
+          "type": "object"
+        },
+        "className": {
+          "default": "",
+          "title": "className",
+          "type": "string"
+        },
+        "enabled": {
+          "default": false,
+          "title": "enabled",
+          "type": "boolean"
+        },
+        "hosts": {
+          "items": {
+            "anyOf": [
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "host": {
+                    "default": "chart-example.local",
+                    "title": "host",
+                    "type": "string"
+                  },
+                  "paths": {
+                    "items": {
+                      "anyOf": [
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "path": {
+                              "default": "/",
+                              "title": "path",
+                              "type": "string"
+                            },
+                            "pathType": {
+                              "default": "ImplementationSpecific",
+                              "title": "pathType",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "path",
+                            "pathType"
+                          ],
+                          "type": "object"
+                        }
+                      ],
+                      "required": []
+                    },
+                    "title": "paths",
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "host",
+                  "paths"
+                ],
+                "type": "object"
+              }
+            ],
+            "required": []
+          },
+          "title": "hosts",
+          "type": "array"
+        },
+        "tls": {
+          "items": {
+            "required": []
+          },
+          "title": "tls",
+          "type": "array"
+        }
+      },
+      "required": [
+        "enabled",
+        "className",
+        "annotations",
+        "hosts",
+        "tls"
+      ],
+      "title": "ingress",
+      "type": "object"
+    },
+    "msmtp": {
+      "additionalProperties": false,
+      "description": "MSMTP Configuration  ",
+      "properties": {
+        "from": {
+          "default": "rt@example.com",
+          "title": "from",
+          "type": "string"
+        },
+        "host": {
+          "default": "smtp.gmail.com",
+          "title": "host",
+          "type": "string"
+        },
+        "password": {
+          "default": "",
+          "title": "password",
+          "type": "string"
+        },
+        "port": {
+          "default": 587,
+          "title": "port",
+          "type": "integer"
+        },
+        "user": {
+          "default": "rt@example.com",
+          "title": "user",
+          "type": "string"
+        }
+      },
+      "required": [
+        "host",
+        "port",
+        "from",
+        "user",
+        "password"
+      ],
+      "title": "msmtp",
+      "type": "object"
+    },
+    "nameOverride": {
+      "default": "",
+      "title": "nameOverride",
+      "type": "string"
+    },
+    "nodeSelector": {
+      "additionalProperties": false,
+      "required": [],
+      "title": "nodeSelector",
+      "type": "object"
+    },
+    "persistence": {
+      "additionalProperties": false,
+      "description": "Persistence",
+      "properties": {
+        "accessMode": {
+          "default": "ReadWriteOnce",
+          "title": "accessMode",
+          "type": "string"
+        },
+        "enabled": {
+          "default": true,
+          "title": "enabled",
+          "type": "boolean"
+        },
+        "gpg": {
+          "additionalProperties": false,
+          "properties": {
+            "size": {
+              "default": "100Mi",
+              "title": "size",
+              "type": "string"
+            }
+          },
+          "required": [
+            "size"
+          ],
+          "title": "gpg",
+          "type": "object"
+        },
+        "shredder": {
+          "additionalProperties": false,
+          "properties": {
+            "size": {
+              "default": "500Mi",
+              "title": "size",
+              "type": "string"
+            }
+          },
+          "required": [
+            "size"
+          ],
+          "title": "shredder",
+          "type": "object"
+        },
+        "size": {
+          "default": "1Gi",
+          "title": "size",
+          "type": "string"
+        },
+        "storageClass": {
+          "default": "",
+          "title": "storageClass",
+          "type": "string"
+        }
+      },
+      "required": [
+        "enabled",
+        "storageClass",
+        "accessMode",
+        "size",
+        "gpg",
+        "shredder"
+      ],
+      "title": "persistence",
+      "type": "object"
+    },
+    "podSecurityContext": {
+      "additionalProperties": false,
+      "properties": {
+        "fsGroup": {
+          "default": 1000,
+          "title": "fsGroup",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "fsGroup"
+      ],
+      "title": "podSecurityContext",
+      "type": "object"
+    },
+    "postgresql": {
+      "additionalProperties": false,
+      "description": "PostgreSQL configuration (Bitnami chart)",
+      "properties": {
+        "auth": {
+          "additionalProperties": false,
+          "properties": {
+            "database": {
+              "default": "rt",
+              "title": "database",
+              "type": "string"
+            },
+            "password": {
+              "default": "",
+              "title": "password",
+              "type": "string"
+            },
+            "username": {
+              "default": "rtuser",
+              "title": "username",
+              "type": "string"
+            }
+          },
+          "required": [
+            "username",
+            "password",
+            "database"
+          ],
+          "title": "auth",
+          "type": "object"
+        },
+        "enabled": {
+          "default": true,
+          "title": "enabled",
+          "type": "boolean"
+        },
+        "fullnameOverride": {
+          "default": "postgresql",
+          "title": "fullnameOverride",
+          "type": "string"
+        },
+        "persistence": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "title": "enabled",
+              "type": "boolean"
+            },
+            "size": {
+              "default": "10Gi",
+              "title": "size",
+              "type": "string"
+            },
+            "storageClass": {
+              "default": "",
+              "title": "storageClass",
+              "type": "string"
+            }
+          },
+          "required": [
+            "enabled",
+            "size",
+            "storageClass"
+          ],
+          "title": "persistence",
+          "type": "object"
+        },
+        "primary": {
+          "additionalProperties": false,
+          "properties": {
+            "initdb": {
+              "additionalProperties": false,
+              "properties": {
+                "scripts": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "grant-privileges.sql": {
+                      "default": "ALTER USER rtuser WITH SUPERUSER;\n",
+                      "title": "grant-privileges.sql",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "grant-privileges.sql"
+                  ],
+                  "title": "scripts",
+                  "type": "object"
+                }
+              },
+              "required": [
+                "scripts"
+              ],
+              "title": "initdb",
+              "type": "object"
+            }
+          },
+          "required": [
+            "initdb"
+          ],
+          "title": "primary",
+          "type": "object"
+        }
+      },
+      "required": [
+        "enabled",
+        "fullnameOverride",
+        "auth",
+        "persistence",
+        "primary"
+      ],
+      "title": "postgresql",
+      "type": "object"
+    },
+    "replicaCount": {
+      "default": 1,
+      "description": "Default values for request-tracker",
+      "title": "replicaCount",
+      "type": "integer"
+    },
+    "resources": {
+      "additionalProperties": false,
+      "description": "Resources",
+      "properties": {
+        "limits": {
+          "additionalProperties": false,
+          "properties": {
+            "cpu": {
+              "default": "500m",
+              "title": "cpu",
+              "type": "string"
+            },
+            "memory": {
+              "default": "1Gi",
+              "title": "memory",
+              "type": "string"
+            }
+          },
+          "required": [
+            "memory",
+            "cpu"
+          ],
+          "title": "limits",
+          "type": "object"
+        },
+        "requests": {
+          "additionalProperties": false,
+          "properties": {
+            "cpu": {
+              "default": "250m",
+              "title": "cpu",
+              "type": "string"
+            },
+            "memory": {
+              "default": "512Mi",
+              "title": "memory",
+              "type": "string"
+            }
+          },
+          "required": [
+            "memory",
+            "cpu"
+          ],
+          "title": "requests",
+          "type": "object"
+        }
+      },
+      "required": [
+        "requests",
+        "limits"
+      ],
+      "title": "resources",
+      "type": "object"
+    },
+    "rt": {
+      "additionalProperties": false,
+      "description": "Request Tracker Configuration",
+      "properties": {
+        "database": {
+          "additionalProperties": false,
+          "properties": {
+            "host": {
+              "default": "postgresql",
+              "title": "host",
+              "type": "string"
+            },
+            "name": {
+              "default": "rt",
+              "title": "name",
+              "type": "string"
+            },
+            "password": {
+              "default": "",
+              "title": "password",
+              "type": "string"
+            },
+            "port": {
+              "default": 5432,
+              "title": "port",
+              "type": "integer"
+            },
+            "user": {
+              "default": "rtuser",
+              "title": "user",
+              "type": "string"
+            }
+          },
+          "required": [
+            "host",
+            "port",
+            "name",
+            "user",
+            "password"
+          ],
+          "title": "database",
+          "type": "object"
+        },
+        "domain": {
+          "default": "example.com",
+          "title": "domain",
+          "type": "string"
+        },
+        "gnupg": {
+          "additionalProperties": false,
+          "properties": {
+            "passphrase": {
+              "default": "",
+              "title": "passphrase",
+              "type": "string"
+            }
+          },
+          "required": [
+            "passphrase"
+          ],
+          "title": "gnupg",
+          "type": "object"
+        },
+        "name": {
+          "default": "RT",
+          "title": "name",
+          "type": "string"
+        },
+        "organization": {
+          "default": "Example",
+          "title": "organization",
+          "type": "string"
+        },
+        "rootPassword": {
+          "default": "",
+          "title": "rootPassword",
+          "type": "string"
+        },
+        "smime": {
+          "additionalProperties": false,
+          "properties": {
+            "passphrase": {
+              "default": "",
+              "title": "passphrase",
+              "type": "string"
+            },
+            "user": {
+              "default": "",
+              "title": "user",
+              "type": "string"
+            }
+          },
+          "required": [
+            "user",
+            "passphrase"
+          ],
+          "title": "smime",
+          "type": "object"
+        },
+        "timezone": {
+          "default": "Africa/Abidjan",
+          "title": "timezone",
+          "type": "string"
+        },
+        "web": {
+          "additionalProperties": false,
+          "properties": {
+            "domain": {
+              "default": "example.com",
+              "title": "domain",
+              "type": "string"
+            },
+            "port": {
+              "default": 80,
+              "title": "port",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "domain",
+            "port"
+          ],
+          "title": "web",
+          "type": "object"
+        }
+      },
+      "required": [
+        "rootPassword",
+        "domain",
+        "name",
+        "organization",
+        "timezone",
+        "web",
+        "database",
+        "gnupg",
+        "smime"
+      ],
+      "title": "rt",
+      "type": "object"
+    },
+    "scripts": {
+      "additionalProperties": false,
+      "description": "Scripts",
+      "properties": {
+        "initDatabase": {
+          "default": true,
+          "title": "initDatabase",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "initDatabase"
+      ],
+      "title": "scripts",
+      "type": "object"
+    },
+    "securityContext": {
+      "additionalProperties": false,
+      "properties": {
+        "runAsGroup": {
+          "default": 1000,
+          "title": "runAsGroup",
+          "type": "integer"
+        },
+        "runAsNonRoot": {
+          "default": true,
+          "title": "runAsNonRoot",
+          "type": "boolean"
+        },
+        "runAsUser": {
+          "default": 1000,
+          "title": "runAsUser",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "runAsNonRoot",
+        "runAsUser",
+        "runAsGroup"
+      ],
+      "title": "securityContext",
+      "type": "object"
+    },
+    "service": {
+      "additionalProperties": false,
+      "description": "Service",
+      "properties": {
+        "port": {
+          "default": 80,
+          "title": "port",
+          "type": "integer"
+        },
+        "type": {
+          "default": "ClusterIP",
+          "title": "type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "port"
+      ],
+      "title": "service",
+      "type": "object"
+    },
+    "serviceAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "annotations": {
+          "additionalProperties": false,
+          "required": [],
+          "title": "annotations",
+          "type": "object"
+        },
+        "create": {
+          "default": true,
+          "title": "create",
+          "type": "boolean"
+        },
+        "name": {
+          "default": "",
+          "title": "name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "create",
+        "annotations",
+        "name"
+      ],
+      "title": "serviceAccount",
+      "type": "object"
+    },
+    "tolerations": {
+      "items": {
+        "required": []
+      },
+      "title": "tolerations",
+      "type": "array"
+    }
+  },
+  "required": [
+    "replicaCount",
+    "image",
+    "nameOverride",
+    "fullnameOverride",
+    "serviceAccount",
+    "podSecurityContext",
+    "securityContext",
+    "rt",
+    "msmtp",
+    "getmail",
+    "cron",
+    "service",
+    "ingress",
+    "persistence",
+    "resources",
+    "autoscaling",
+    "scripts",
+    "nodeSelector",
+    "tolerations",
+    "affinity",
+    "postgresql",
+    "adminer"
+  ],
+  "type": "object"
+}

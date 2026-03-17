@@ -1,0 +1,777 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "properties": {
+    "api": {
+      "additionalProperties": false,
+      "properties": {
+        "contextPath": {
+          "default": "",
+          "title": "contextPath",
+          "type": "string"
+        },
+        "image": {
+          "additionalProperties": false,
+          "properties": {
+            "pullPolicy": {
+              "default": "IfNotPresent",
+              "title": "pullPolicy",
+              "type": "string"
+            },
+            "repository": {
+              "default": "ghcr.io/novuhq/novu/api",
+              "title": "repository",
+              "type": "string"
+            },
+            "tag": {
+              "default": "2.3.0",
+              "title": "tag",
+              "type": "string"
+            }
+          },
+          "required": [
+            "repository",
+            "pullPolicy",
+            "tag"
+          ],
+          "title": "image",
+          "type": "object"
+        },
+        "port": {
+          "default": 3000,
+          "title": "port",
+          "type": "integer"
+        },
+        "replicaCount": {
+          "default": 1,
+          "title": "replicaCount",
+          "type": "integer"
+        },
+        "resources": {
+          "additionalProperties": false,
+          "properties": {
+            "limits": {
+              "additionalProperties": false,
+              "properties": {
+                "cpu": {
+                  "default": "1000m",
+                  "title": "cpu",
+                  "type": "string"
+                },
+                "memory": {
+                  "default": "1Gi",
+                  "title": "memory",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "cpu",
+                "memory"
+              ],
+              "title": "limits",
+              "type": "object"
+            },
+            "requests": {
+              "additionalProperties": false,
+              "properties": {
+                "cpu": {
+                  "default": "500m",
+                  "title": "cpu",
+                  "type": "string"
+                },
+                "memory": {
+                  "default": "512Mi",
+                  "title": "memory",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "cpu",
+                "memory"
+              ],
+              "title": "requests",
+              "type": "object"
+            }
+          },
+          "required": [
+            "requests",
+            "limits"
+          ],
+          "title": "resources",
+          "type": "object"
+        }
+      },
+      "required": [
+        "replicaCount",
+        "image",
+        "port",
+        "resources",
+        "contextPath"
+      ],
+      "title": "api",
+      "type": "object"
+    },
+    "global": {
+      "additionalProperties": false,
+      "properties": {
+        "env": {
+          "additionalProperties": false,
+          "properties": {
+            "apiRootUrl": {
+              "default": "http://localhost:3000",
+              "title": "apiRootUrl",
+              "type": "string"
+            },
+            "aws": {
+              "additionalProperties": false,
+              "properties": {
+                "accessKeyId": {
+                  "default": "your-access-key-id",
+                  "title": "accessKeyId",
+                  "type": "string"
+                },
+                "secretAccessKey": {
+                  "default": "your-secret-access-key",
+                  "title": "secretAccessKey",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "accessKeyId",
+                "secretAccessKey"
+              ],
+              "title": "aws",
+              "type": "object"
+            },
+            "disableUserRegistration": {
+              "default": false,
+              "title": "disableUserRegistration",
+              "type": "boolean"
+            },
+            "frontBaseUrl": {
+              "default": "http://localhost:4200",
+              "title": "frontBaseUrl",
+              "type": "string"
+            },
+            "mongodb": {
+              "additionalProperties": false,
+              "properties": {
+                "maxPoolSize": {
+                  "default": 200,
+                  "title": "maxPoolSize",
+                  "type": "integer"
+                },
+                "minPoolSize": {
+                  "default": 75,
+                  "title": "minPoolSize",
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "maxPoolSize",
+                "minPoolSize"
+              ],
+              "title": "mongodb",
+              "type": "object"
+            },
+            "newRelic": {
+              "additionalProperties": false,
+              "properties": {
+                "appName": {
+                  "default": "your-new-relic-app-name",
+                  "title": "appName",
+                  "type": "string"
+                },
+                "licenseKey": {
+                  "default": "your-new-relic-license-key",
+                  "title": "licenseKey",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "appName",
+                "licenseKey"
+              ],
+              "title": "newRelic",
+              "type": "object"
+            },
+            "nodeEnv": {
+              "default": "production",
+              "title": "nodeEnv",
+              "type": "string"
+            },
+            "s3": {
+              "additionalProperties": false,
+              "properties": {
+                "bucketName": {
+                  "default": "your-bucket-name",
+                  "title": "bucketName",
+                  "type": "string"
+                },
+                "localStack": {
+                  "default": false,
+                  "title": "localStack",
+                  "type": "boolean"
+                },
+                "region": {
+                  "default": "your-region",
+                  "title": "region",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "localStack",
+                "bucketName",
+                "region"
+              ],
+              "title": "s3",
+              "type": "object"
+            },
+            "secret": {
+              "additionalProperties": false,
+              "properties": {
+                "jwtSecret": {
+                  "default": "your-secret",
+                  "title": "jwtSecret",
+                  "type": "string"
+                },
+                "novuSecretKey": {
+                  "default": "your-secret",
+                  "title": "novuSecretKey",
+                  "type": "string"
+                },
+                "storageKey": {
+                  "default": "\u003cENCRYPTION_KEY_MUST_BE_32_LONG\u003e",
+                  "title": "storageKey",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "novuSecretKey",
+                "jwtSecret",
+                "storageKey"
+              ],
+              "title": "secret",
+              "type": "object"
+            },
+            "sentry": {
+              "additionalProperties": false,
+              "properties": {
+                "dsn": {
+                  "default": "your-sentry-dsn",
+                  "title": "dsn",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "dsn"
+              ],
+              "title": "sentry",
+              "type": "object"
+            }
+          },
+          "required": [
+            "nodeEnv",
+            "mongodb",
+            "secret",
+            "s3",
+            "aws",
+            "sentry",
+            "newRelic",
+            "apiRootUrl",
+            "disableUserRegistration",
+            "frontBaseUrl"
+          ],
+          "title": "env",
+          "type": "object"
+        },
+        "imagePullSecrets": {
+          "items": {
+            "required": []
+          },
+          "title": "imagePullSecrets",
+          "type": "array"
+        }
+      },
+      "required": [
+        "imagePullSecrets",
+        "env"
+      ],
+      "title": "global",
+      "type": "object"
+    },
+    "ingress": {
+      "additionalProperties": false,
+      "properties": {
+        "annotations": {
+          "additionalProperties": false,
+          "required": [],
+          "title": "annotations",
+          "type": "object"
+        },
+        "className": {
+          "default": "",
+          "title": "className",
+          "type": "string"
+        },
+        "enabled": {
+          "default": false,
+          "title": "enabled",
+          "type": "boolean"
+        },
+        "host": {
+          "default": "chart-example.local",
+          "description": "kubernetes.io/ingress.class: nginx\nkubernetes.io/tls-acme: \"true\"",
+          "title": "host",
+          "type": "string"
+        },
+        "tls": {
+          "additionalProperties": false,
+          "properties": {
+            "secretName": {
+              "default": "novu-tls",
+              "title": "secretName",
+              "type": "string"
+            }
+          },
+          "required": [
+            "secretName"
+          ],
+          "title": "tls",
+          "type": "object"
+        }
+      },
+      "required": [
+        "enabled",
+        "className",
+        "annotations",
+        "host",
+        "tls"
+      ],
+      "title": "ingress",
+      "type": "object"
+    },
+    "mongodb": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "default": true,
+          "title": "enabled",
+          "type": "boolean"
+        },
+        "serviceBindings": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "title": "enabled",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "enabled"
+          ],
+          "title": "serviceBindings",
+          "type": "object"
+        }
+      },
+      "required": [
+        "enabled",
+        "serviceBindings"
+      ],
+      "title": "mongodb",
+      "type": "object"
+    },
+    "redis": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "default": true,
+          "title": "enabled",
+          "type": "boolean"
+        },
+        "replica": {
+          "additionalProperties": false,
+          "properties": {
+            "replicaCount": {
+              "default": 1,
+              "title": "replicaCount",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "replicaCount"
+          ],
+          "title": "replica",
+          "type": "object"
+        }
+      },
+      "required": [
+        "enabled",
+        "replica"
+      ],
+      "title": "redis",
+      "type": "object"
+    },
+    "service": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "default": "ClusterIP",
+          "title": "type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "service",
+      "type": "object"
+    },
+    "web": {
+      "additionalProperties": false,
+      "properties": {
+        "image": {
+          "additionalProperties": false,
+          "properties": {
+            "pullPolicy": {
+              "default": "IfNotPresent",
+              "title": "pullPolicy",
+              "type": "string"
+            },
+            "repository": {
+              "default": "ghcr.io/novuhq/novu/dashboard",
+              "title": "repository",
+              "type": "string"
+            },
+            "tag": {
+              "default": "2.3.0",
+              "title": "tag",
+              "type": "string"
+            }
+          },
+          "required": [
+            "repository",
+            "pullPolicy",
+            "tag"
+          ],
+          "title": "image",
+          "type": "object"
+        },
+        "legacyDashboardUrl": {
+          "default": "",
+          "title": "legacyDashboardUrl",
+          "type": "string"
+        },
+        "port": {
+          "default": 4000,
+          "title": "port",
+          "type": "integer"
+        },
+        "replicaCount": {
+          "default": 1,
+          "title": "replicaCount",
+          "type": "integer"
+        },
+        "resources": {
+          "additionalProperties": false,
+          "properties": {
+            "limits": {
+              "additionalProperties": false,
+              "properties": {
+                "cpu": {
+                  "default": "500m",
+                  "title": "cpu",
+                  "type": "string"
+                },
+                "memory": {
+                  "default": "1Gi",
+                  "title": "memory",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "cpu",
+                "memory"
+              ],
+              "title": "limits",
+              "type": "object"
+            },
+            "requests": {
+              "additionalProperties": false,
+              "properties": {
+                "cpu": {
+                  "default": "250m",
+                  "title": "cpu",
+                  "type": "string"
+                },
+                "memory": {
+                  "default": "512Mi",
+                  "title": "memory",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "cpu",
+                "memory"
+              ],
+              "title": "requests",
+              "type": "object"
+            }
+          },
+          "required": [
+            "requests",
+            "limits"
+          ],
+          "title": "resources",
+          "type": "object"
+        },
+        "websocketHostname": {
+          "default": "",
+          "title": "websocketHostname",
+          "type": "string"
+        }
+      },
+      "required": [
+        "replicaCount",
+        "image",
+        "port",
+        "resources",
+        "websocketHostname",
+        "legacyDashboardUrl"
+      ],
+      "title": "web",
+      "type": "object"
+    },
+    "worker": {
+      "additionalProperties": false,
+      "properties": {
+        "broadcastQueueChunkSize": {
+          "default": 100,
+          "title": "broadcastQueueChunkSize",
+          "type": "integer"
+        },
+        "image": {
+          "additionalProperties": false,
+          "properties": {
+            "pullPolicy": {
+              "default": "IfNotPresent",
+              "title": "pullPolicy",
+              "type": "string"
+            },
+            "repository": {
+              "default": "ghcr.io/novuhq/novu/worker",
+              "title": "repository",
+              "type": "string"
+            },
+            "tag": {
+              "default": "2.3.0",
+              "title": "tag",
+              "type": "string"
+            }
+          },
+          "required": [
+            "repository",
+            "pullPolicy",
+            "tag"
+          ],
+          "title": "image",
+          "type": "object"
+        },
+        "multicastQueueChunkSize": {
+          "default": 100,
+          "title": "multicastQueueChunkSize",
+          "type": "integer"
+        },
+        "replicaCount": {
+          "default": 1,
+          "title": "replicaCount",
+          "type": "integer"
+        },
+        "resources": {
+          "additionalProperties": false,
+          "properties": {
+            "limits": {
+              "additionalProperties": false,
+              "properties": {
+                "cpu": {
+                  "default": "500m",
+                  "title": "cpu",
+                  "type": "string"
+                },
+                "memory": {
+                  "default": "1Gi",
+                  "title": "memory",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "cpu",
+                "memory"
+              ],
+              "title": "limits",
+              "type": "object"
+            },
+            "requests": {
+              "additionalProperties": false,
+              "properties": {
+                "cpu": {
+                  "default": "250m",
+                  "title": "cpu",
+                  "type": "string"
+                },
+                "memory": {
+                  "default": "512Mi",
+                  "title": "memory",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "cpu",
+                "memory"
+              ],
+              "title": "requests",
+              "type": "object"
+            }
+          },
+          "required": [
+            "requests",
+            "limits"
+          ],
+          "title": "resources",
+          "type": "object"
+        }
+      },
+      "required": [
+        "replicaCount",
+        "image",
+        "resources",
+        "broadcastQueueChunkSize",
+        "multicastQueueChunkSize"
+      ],
+      "title": "worker",
+      "type": "object"
+    },
+    "ws": {
+      "additionalProperties": false,
+      "properties": {
+        "contextPath": {
+          "default": "",
+          "title": "contextPath",
+          "type": "string"
+        },
+        "image": {
+          "additionalProperties": false,
+          "properties": {
+            "pullPolicy": {
+              "default": "IfNotPresent",
+              "title": "pullPolicy",
+              "type": "string"
+            },
+            "repository": {
+              "default": "ghcr.io/novuhq/novu/ws",
+              "title": "repository",
+              "type": "string"
+            },
+            "tag": {
+              "default": "2.3.0",
+              "title": "tag",
+              "type": "string"
+            }
+          },
+          "required": [
+            "repository",
+            "pullPolicy",
+            "tag"
+          ],
+          "title": "image",
+          "type": "object"
+        },
+        "port": {
+          "default": 3002,
+          "title": "port",
+          "type": "integer"
+        },
+        "replicaCount": {
+          "default": 1,
+          "title": "replicaCount",
+          "type": "integer"
+        },
+        "resources": {
+          "additionalProperties": false,
+          "properties": {
+            "limits": {
+              "additionalProperties": false,
+              "properties": {
+                "cpu": {
+                  "default": "500m",
+                  "title": "cpu",
+                  "type": "string"
+                },
+                "memory": {
+                  "default": "1Gi",
+                  "title": "memory",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "cpu",
+                "memory"
+              ],
+              "title": "limits",
+              "type": "object"
+            },
+            "requests": {
+              "additionalProperties": false,
+              "properties": {
+                "cpu": {
+                  "default": "250m",
+                  "title": "cpu",
+                  "type": "string"
+                },
+                "memory": {
+                  "default": "512Mi",
+                  "title": "memory",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "cpu",
+                "memory"
+              ],
+              "title": "requests",
+              "type": "object"
+            }
+          },
+          "required": [
+            "requests",
+            "limits"
+          ],
+          "title": "resources",
+          "type": "object"
+        }
+      },
+      "required": [
+        "replicaCount",
+        "image",
+        "port",
+        "contextPath",
+        "resources"
+      ],
+      "title": "ws",
+      "type": "object"
+    }
+  },
+  "required": [
+    "ingress",
+    "service",
+    "web",
+    "api",
+    "worker",
+    "ws",
+    "global",
+    "redis",
+    "mongodb"
+  ],
+  "type": "object"
+}

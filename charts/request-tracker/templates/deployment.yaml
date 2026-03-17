@@ -1,0 +1,185 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "request-tracker.fullname" . }}
+  labels:
+    {{- include "request-tracker.labels" . | nindent 4 }}
+    app.kubernetes.io/component: rt
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "request-tracker.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: rt
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "request-tracker.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: rt
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "request-tracker.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        {{- if .Values.scripts.initDatabase }}
+        - name: wait-for-database
+          image: postgres:15-alpine
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Waiting for PostgreSQL to be ready..."
+              until pg_isready -h {{ include "request-tracker.databaseHost" . }} -p {{ .Values.rt.database.port }} -U {{ .Values.rt.database.user }}; do
+                echo "Waiting for database..."
+                sleep 2
+              done
+              echo "PostgreSQL is ready!"
+        - name: init-database
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - /bin/bash
+            - -c
+            - |
+              echo "${RT_ROOT_PASSWORD}" > /tmp/root-password
+              perl /opt/rt5/sbin/rt-setup-database \
+                --action init --skip-create \
+                --dba="$RT_DB_USER" \
+                --dba-password="${RT_DB_PASSWORD}" \
+                --root-password-file=/tmp/root-password
+          env:
+            - name: RT_DB_USER
+              value: {{ .Values.rt.database.user | quote }}
+            - name: RT_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "request-tracker.secretName" . }}
+                  key: database-password
+            - name: RT_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "request-tracker.secretName" . }}
+                  key: root-password
+          volumeMounts:
+            - name: rt-config
+              mountPath: /opt/rt5/etc/RT_SiteConfig.pm
+              subPath: RT_SiteConfig.pm
+        {{- end }}
+      containers:
+        - name: rt
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: fastcgi
+              containerPort: 9000
+              protocol: TCP
+          env:
+            - name: RT_DB_HOST
+              value: {{ include "request-tracker.databaseHost" . | quote }}
+            - name: RT_DB_PORT
+              value: {{ .Values.rt.database.port | quote }}
+            - name: RT_DB_USER
+              value: {{ .Values.rt.database.user | quote }}
+            - name: RT_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "request-tracker.secretName" . }}
+                  key: database-password
+            - name: RT_DB_NAME
+              value: {{ .Values.rt.database.name | quote }}
+            - name: RT_WEB_DOMAIN
+              value: {{ .Values.rt.web.domain | quote }}
+            - name: RT_WEB_PORT
+              value: {{ .Values.rt.web.port | quote }}
+            - name: RT_WEB_BASE_URL
+              value: {{ printf "https://rt.%s" .Values.rt.web.domain | quote }}
+            - name: RT_NAME
+              value: {{ .Values.rt.name | quote }}
+            - name: RT_ORGANIZATION
+              value: {{ .Values.rt.organization | quote }}
+            - name: RT_TIMEZONE
+              value: {{ .Values.rt.timezone | quote }}
+          volumeMounts:
+            - name: rt-config
+              mountPath: /opt/rt5/etc/RT_SiteConfig.pm
+              subPath: RT_SiteConfig.pm
+            - name: msmtp-config
+              mountPath: /etc/msmtprc
+              subPath: msmtp.conf
+            {{- if .Values.persistence.enabled }}
+            - name: rt-data
+              mountPath: /opt/rt5/var
+            - name: gpg-data
+              mountPath: /opt/rt5/var/data/gpg
+            - name: shredder-data
+              mountPath: /opt/rt5/var/data/RT-Shredder
+            {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+        - name: caddy
+          image: caddy:2-alpine
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          volumeMounts:
+            - name: caddy-config
+              mountPath: /etc/caddy/Caddyfile
+              subPath: Caddyfile
+      volumes:
+        - name: rt-config
+          configMap:
+            name: {{ include "request-tracker.fullname" . }}-config
+        - name: msmtp-config
+          configMap:
+            name: {{ include "request-tracker.fullname" . }}-config
+        - name: caddy-config
+          configMap:
+            name: {{ include "request-tracker.fullname" . }}-caddy
+        {{- if .Values.persistence.enabled }}
+        - name: rt-data
+          persistentVolumeClaim:
+            claimName: {{ include "request-tracker.fullname" . }}-data
+        - name: gpg-data
+          persistentVolumeClaim:
+            claimName: {{ include "request-tracker.fullname" . }}-gpg
+        - name: shredder-data
+          persistentVolumeClaim:
+            claimName: {{ include "request-tracker.fullname" . }}-shredder
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

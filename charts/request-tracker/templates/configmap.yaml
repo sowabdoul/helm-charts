@@ -1,0 +1,130 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "request-tracker.fullname" . }}-caddy
+  labels:
+    {{- include "request-tracker.labels" . | nindent 4 }}
+data:
+  Caddyfile: |
+    :80 {
+      reverse_proxy localhost:9000 {
+        transport fastcgi
+      }
+    }
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "request-tracker.fullname" . }}-config
+  labels:
+    {{- include "request-tracker.labels" . | nindent 4 }}
+data:
+  RT_SiteConfig.pm: |
+    ### Base configuration ###
+    Set($rtname, '{{ .Values.rt.name }}');
+    Set($WebDomain, '{{ .Values.rt.web.domain }}');
+    Set($WebPort, {{ .Values.rt.web.port }});
+    Set($CanonicalizeRedirectURLs, 1);
+    Set($CanonicalizeURLsInFeeds, 1);
+
+    Plugin('RT::Extension::MergeUsers');
+    Plugin('RT::Extension::TerminalTheme');
+
+    ### Database connection ###
+    Set($DatabaseType, 'Pg');
+    Set($DatabaseHost, '{{ .Values.rt.database.host }}');
+    Set($DatabasePort, '{{ .Values.rt.database.port }}');
+    Set($DatabaseUser, '{{ .Values.rt.database.user }}');
+    Set($DatabasePassword, '{{ .Values.rt.database.password }}');
+    Set($DatabaseName, '{{ .Values.rt.database.name }}');
+    Set($DatabaseAdmin, '{{ .Values.rt.database.user }}');
+
+    Set($SendmailPath, '/usr/bin/msmtp');
+
+    ### GnuPG configuration ###
+    Set(%GnuPG,
+      Enable                 => 1,
+      GnuPG                  => 'gpg',
+      Passphrase             => undef,
+      OutgoingMessagesFormat => 'RFC'
+    );
+
+    Set(%GnuPGOptions,
+      homedir             => '/opt/rt/var/data/gpg',
+      passphrase          => '{{ .Values.rt.gnupg.passphrase }}',
+      keyserver           => 'hkps://keys.openpgp.org',
+      'keyserver-options' => 'auto-key-retrieve timeout=20',
+      'auto-key-locate'   => 'keyserver',
+    );
+
+    ### SMIME configuration ###
+    Set(%SMIME,
+        Enable             => 1,
+        AcceptUntrustedCAs => 1,
+        OpenSSL            => '/usr/bin/openssl',
+        Keyring            => '/opt/rt/var/data/smime',
+        CAPath             => '/opt/rt/var/data/smime/signing-ca.pem',
+        Passphrase => {
+            '{{ .Values.rt.smime.user }}' => '{{ .Values.rt.smime.passphrase }}',
+            ''                            => 'fallback',
+        },
+    );
+
+    1;
+
+  msmtp.conf: |
+    defaults
+
+    account smtp
+    host {{ .Values.msmtp.host }}
+    port {{ .Values.msmtp.port }}
+    tls on
+    tls_starttls on
+    from {{ .Values.msmtp.from }}
+    tls_trust_file /msmtp/ca-bundle.crt
+    tls_certcheck on
+    auth on
+    user {{ .Values.msmtp.user }}
+    password {{ .Values.msmtp.password }}
+    logfile -
+
+    account default : smtp
+
+  getmailrc: |
+    [retriever]
+    type = SimpleIMAPSSLRetriever
+    server = {{ .Values.getmail.server }}
+    username = {{ .Values.getmail.user }}
+    password = {{ .Values.getmail.password }}
+    mailboxes = ("INBOX",)
+
+    [destination]
+    type = MDA_external
+    path = /opt/rt/bin/rt-mailgate
+    user = rt
+    group = rt
+    arguments = ("--url", "{{ .Values.getmail.rt_url }}", "--queue", "general", "--action", "correspond",)
+
+    [options]
+    read_all = false
+    delete = true
+    verbose = 0
+
+  crontab: |
+    MAILTO={{ .Values.cron.mailto }}
+
+    SHELL=/bin/sh
+    PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+    # clean sessions
+    0 0 * * * rt /opt/rt/sbin/rt-clean-sessions
+
+    # refresh full text index
+    0 * * * * rt /opt/rt/sbin/rt-fulltext-indexer --quiet 2>&1 | grep -v "Words longer than 2047 characters are ignored" | grep -v "word is too long to be indexed"
+
+    # get mails
+    * * * * * rt /usr/bin/getmail --rcfile=getmailrc -g /getmail
+
+    # email dashboards
+    0 * * * * rt /opt/rt/sbin/rt-email-dashboards

@@ -1,0 +1,153 @@
+# Default values for request-tracker
+replicaCount: 1
+
+image:
+  repository: firefart/requesttracker
+  tag: "5.0.8"
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podSecurityContext:
+  fsGroup: 1000
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+
+# Request Tracker Configuration
+rt:
+  rootPassword: ""
+  domain: "example.com"
+  name: "RT"
+  organization: "Example"
+  timezone: "Africa/Abidjan"
+  
+  web:
+    domain: "example.com"
+    port: 80
+
+  database:
+    host: "postgresql"
+    port: 5432
+    name: "rt"
+    user: "rtuser"
+    password: ""
+
+  gnupg:
+    passphrase: ""
+
+  smime:
+    user: ""
+    passphrase: ""
+
+# MSMTP Configuration  
+msmtp:
+  host: "smtp.gmail.com"
+  port: 587
+  from: "rt@example.com"
+  user: "rt@example.com" 
+  password: ""
+
+# GetMail Configuration
+getmail:
+  enabled: false
+  server: "imap.gmail.com"
+  user: "rt@example.com"
+  password: ""
+  rt_url: "http://localhost/"
+
+# Cron Configuration
+cron:
+  enabled: true
+  mailto: "rt@example.com"
+  image:
+    repository: firefart/requesttracker
+    tag: "5.0.8"
+  persistence:
+    enabled: true
+    storageClass: ""
+    size: 100Mi
+
+# Service
+service:
+  type: ClusterIP
+  port: 80
+
+# Ingress
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+# Persistence
+persistence:
+  enabled: true
+  storageClass: ""
+  accessMode: ReadWriteOnce
+  size: 1Gi
+  gpg:
+    size: 100Mi
+  shredder:
+    size: 500Mi
+
+# Resources
+resources:
+  requests:
+    memory: 512Mi
+    cpu: 250m
+  limits:
+    memory: 1Gi
+    cpu: 500m
+
+# Autoscaling
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+# Scripts
+scripts:
+  initDatabase: true
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# PostgreSQL configuration (Bitnami chart)
+postgresql:
+  enabled: true
+  fullnameOverride: postgresql
+  auth:
+    username: rtuser
+    password: ""
+    database: rt
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: ""
+  primary:
+    initdb:
+      scripts:
+        grant-privileges.sql: |
+          ALTER USER rtuser WITH SUPERUSER;
+
+# Adminer configuration (paradeum-team chart)  
+adminer:
+  enabled: true
+  fullnameOverride: adminer

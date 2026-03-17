@@ -1,0 +1,116 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Nova-Edge/novu-chart/refs/heads/main/charts/novu/values.schema.json
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  host: chart-example.local
+  tls:
+    secretName: novu-tls
+
+service:
+  type: ClusterIP
+
+web:
+  replicaCount: 1
+  image:
+    repository: ghcr.io/novuhq/novu/dashboard
+    pullPolicy: IfNotPresent
+    tag: "2.3.0"
+  port: 4000
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "512Mi"
+    limits:
+      cpu: "500m"
+      memory: "1Gi"
+  websocketHostname: ""
+  legacyDashboardUrl: ""
+
+api:
+  replicaCount: 1
+  image:
+    repository: ghcr.io/novuhq/novu/api
+    pullPolicy: IfNotPresent
+    tag: "2.3.0"
+  port: 3000
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "512Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1Gi"
+  contextPath: ""
+
+worker:
+  replicaCount: 1
+  image:
+    repository: ghcr.io/novuhq/novu/worker
+    pullPolicy: IfNotPresent
+    tag: "2.3.0"
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "512Mi"
+    limits:
+      cpu: "500m"
+      memory: "1Gi"
+  broadcastQueueChunkSize: 100
+  multicastQueueChunkSize: 100
+
+ws:
+  replicaCount: 1
+  image:
+    repository: ghcr.io/novuhq/novu/ws
+    pullPolicy: IfNotPresent
+    tag: "2.3.0"
+  port: 3002
+  contextPath: ""
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "512Mi"
+    limits:
+      cpu: "500m"
+      memory: "1Gi"
+
+global:
+  imagePullSecrets: []
+  env:
+    nodeEnv: production
+    mongodb:
+      maxPoolSize: 200
+      minPoolSize: 75
+    secret:
+      novuSecretKey: your-secret
+      jwtSecret: your-secret
+      storageKey: <ENCRYPTION_KEY_MUST_BE_32_LONG>
+    s3:
+      localStack: false
+      bucketName: your-bucket-name
+      region: your-region
+    aws:
+      accessKeyId: your-access-key-id
+      secretAccessKey: your-secret-access-key
+    sentry:
+      dsn: your-sentry-dsn
+    newRelic:
+      appName: your-new-relic-app-name
+      licenseKey: your-new-relic-license-key
+    apiRootUrl: http://localhost:3000
+    disableUserRegistration: false
+    frontBaseUrl: http://localhost:4200
+
+redis:
+  enabled: true
+  replica:
+    replicaCount: 1
+
+mongodb:
+  enabled: true
+  serviceBindings:
+    enabled: true
